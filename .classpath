@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src_util"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="at.bestsolution.efxclipse.tooling.jdt.core.JAVAFX_CONTAINER"/>
+	<classpathentry kind="lib" path="lib_ear/platform_afc.jar"/>
+	<classpathentry kind="lib" path="lib_ear/xapi.jar"/>
+	<classpathentry kind="lib" path="lib_ear/sbishared.jar"/>
+	<classpathentry kind="lib" path="lib_ear/ycdshared.jar"/>
+	<classpathentry kind="lib" path="lib_ear/scecoreshared.jar"/>
+	<classpathentry kind="lib" path="lib_ear/smcfsshared.jar"/>
+	<classpathentry kind="lib" path="lib_ear/platform_afc_ui_impl_be.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore-4.2.4.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

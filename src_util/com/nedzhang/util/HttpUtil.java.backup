@@ -1,0 +1,423 @@
+package com.nedzhang.util;
+
+//package com.nedzhang.skunk.tool.util;
+//
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.util.Map;
+//import java.util.Map.Entry;
+//
+//import org.apache.commons.httpclient.Header;
+//import org.apache.commons.httpclient.HostConfiguration;
+//import org.apache.commons.httpclient.HttpClient;
+//import org.apache.commons.httpclient.HttpException;
+//import org.apache.commons.httpclient.HttpMethod;
+//import org.apache.commons.httpclient.HttpStatus;
+//import org.apache.commons.httpclient.NameValuePair;
+//import org.apache.commons.httpclient.URI;
+//import org.apache.commons.httpclient.URIException;
+//import org.apache.commons.httpclient.UsernamePasswordCredentials;
+//import org.apache.commons.httpclient.auth.AuthScope;
+//import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
+//import org.apache.commons.httpclient.methods.GetMethod;
+//import org.apache.commons.httpclient.methods.PostMethod;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
+//
+///***
+// * The HttpUtil class is an utility class to perform Http Post and Get
+// * operation.
+// * 
+// * @author nzhang
+// * 
+// */
+//public class HttpUtil {
+//
+//	private HttpUtil() {
+//
+//	}
+//
+//	private static Log logger = LogFactory.getLog(HttpUtil.class);
+//
+//	/***
+//	 * Perform HTTP get
+//	 * 
+//	 * @param getMethod
+//	 *            the http get method
+//	 * @param queryParameters
+//	 *            parameters for the get (this builds the query string)
+//	 * @param socketTimeoutInMilisecond
+//	 *            socket timeout. 0 == wait forever. -1 == use default
+//	 * @param proxy
+//	 *            proxy address. null if no proxy is used
+//	 * @param proxyPort
+//	 *            proxy port. 0 if no proxy is used
+//	 * @param proxyUserName
+//	 *            proxy username. null if no proxy is used
+//	 * @param proxyPassword
+//	 *            proxy password. null if no proxy is used
+//	 * @return http response in string
+//	 * @throws HttpException
+//	 * @throws IOException
+//	 */
+//	public static String get(final GetMethod getMethod,
+//			final Map<String, String> queryParameters,
+//			final int socketTimeoutInMilisecond, final String proxy,
+//			final int proxyPort, final String proxyUserName,
+//			final String proxyPassword) throws HttpException, IOException {
+//		
+//		return get(getMethod, queryParameters, socketTimeoutInMilisecond,
+//				proxy, proxyPort, proxyUserName, proxyPassword, true);
+//	}
+//
+//	/***
+//	 * Perform HTTP get
+//	 * 
+//	 * @param getMethod
+//	 *            the http get method
+//	 * @param queryParameters
+//	 *            parameters for the get (this builds the query string)
+//	 * @param socketTimeoutInMilisecond
+//	 *            socket timeout. 0 == wait forever. -1 == use default
+//	 * @param proxy
+//	 *            proxy address. null if no proxy is used
+//	 * @param proxyPort
+//	 *            proxy port. 0 if no proxy is used
+//	 * @param proxyUserName
+//	 *            proxy username. null if no proxy is used
+//	 * @param proxyPassword
+//	 *            proxy password. null if no proxy is used
+//	 * @param enableLog
+//	 * @return http response in string
+//	 * @throws HttpException
+//	 * @throws IOException
+//	 */
+//	public static String get(final GetMethod getMethod,
+//			final Map<String, String> queryParameters,
+//			final int socketTimeoutInMilisecond, final String proxy,
+//			final int proxyPort, final String proxyUserName,
+//			final String proxyPassword, boolean enableLog)
+//			throws HttpException, IOException {
+//
+//		final HttpClient client = getHttpClient(socketTimeoutInMilisecond,
+//				proxy, proxyPort, proxyUserName, proxyPassword);
+//
+//		// Set up query string from the queryParameters
+//		if (queryParameters != null && queryParameters.size() > 0) {
+//
+//			final NameValuePair[] queryPairs = new NameValuePair[queryParameters
+//					.size()];
+//
+//			int i = 0;
+//
+//			for (final Entry<String, String> queryPair : queryParameters
+//					.entrySet()) {
+//				queryPairs[i++] = new NameValuePair(queryPair.getKey(),
+//						queryPair.getValue());
+//			}
+//
+//			getMethod.setQueryString(queryPairs);
+//		}
+//
+//		final String responseBody = executeMethod(client, getMethod,
+//				queryParameters, null, enableLog);
+//
+//		return responseBody;
+//
+//	}
+//	
+//	/***
+//	 * Perform a http post
+//	 * 
+//	 * @param postMethod
+//	 *            the http post method
+//	 * @param content
+//	 *            the content of body to post to http server
+//	 * @param params
+//	 *            the parameters for the post method. Usually, user should
+//	 *            specify either content or params
+//	 * @param socketTimeoutInMilisecond
+//	 *            socket timeout. 0 == wait forever. -1 == use default
+//	 * @param proxy
+//	 *            proxy address. null if no proxy is used
+//	 * @param proxyPort
+//	 *            proxy port. 0 if no proxy is used
+//	 * @param proxyUserName
+//	 *            proxy username. null if no proxy is used
+//	 * @param proxyPassword
+//	 *            proxy password. null if no proxy is used
+//	 * @return http response in string
+//	 * @throws IOException
+//	 * @throws HttpException
+//	 */
+//	public static String post(final PostMethod postMethod,
+//			final String content, final Map<String, String> params,
+//			final int socketTimeoutInMilisecond, final String proxy,
+//			final int proxyPort, final String proxyUserName,
+//			final String proxyPassword) throws HttpException, IOException
+//	{
+//		return post(postMethod, content, params, socketTimeoutInMilisecond, proxy, proxyPort, proxyUserName, proxyPassword, true);
+//	}
+//
+//	/***
+//	 * Perform a http post
+//	 * 
+//	 * @param postMethod
+//	 *            the http post method
+//	 * @param content
+//	 *            the content of body to post to http server
+//	 * @param params
+//	 *            the parameters for the post method. Usually, user should
+//	 *            specify either content or params
+//	 * @param socketTimeoutInMilisecond
+//	 *            socket timeout. 0 == wait forever. -1 == use default
+//	 * @param proxy
+//	 *            proxy address. null if no proxy is used
+//	 * @param proxyPort
+//	 *            proxy port. 0 if no proxy is used
+//	 * @param proxyUserName
+//	 *            proxy username. null if no proxy is used
+//	 * @param proxyPassword
+//	 *            proxy password. null if no proxy is used
+//	 * @param enableLog
+//	 * @return http response in string
+//	 * @throws IOException
+//	 * @throws HttpException
+//	 */
+//	public static String post(final PostMethod postMethod,
+//			final String content, final Map<String, String> params,
+//			final int socketTimeoutInMilisecond, final String proxy,
+//			final int proxyPort, final String proxyUserName,
+//			final String proxyPassword, boolean enableLog) throws IOException,
+//			HttpException {
+//
+//		final HttpClient client = getHttpClient(socketTimeoutInMilisecond,
+//				proxy, proxyPort, proxyUserName, proxyPassword);
+//
+//		if (content != null && content.length() > 0) {
+//			final byte[] requestBody = CharsetUtil.encodeString(content,
+//					postMethod.getRequestCharSet());
+//
+//			postMethod
+//					.setRequestEntity(new ByteArrayRequestEntity(requestBody));
+//		}
+//
+//		if (params != null) {
+//			for (final Entry<String, String> param : params.entrySet()) {
+//				postMethod.setParameter(param.getKey(), param.getValue());
+//			}
+//
+//		}
+//
+//		final String responseBody = executeMethod(client, postMethod, params,
+//				content, enableLog);
+//
+//		return responseBody;
+//	}
+//
+//	private static String executeMethod(final HttpClient client,
+//			final HttpMethod method, final Map<String, String> parameters,
+//			final String content, final boolean enableLog) throws URIException,
+//			IOException, HttpException {
+//
+//		if (enableLog && logger.isInfoEnabled()) {
+//			logRequest(method, content, parameters);
+//		}
+//
+//		// Execute the method.
+//		final int statusCode = client.executeMethod(method);
+//
+//		String responseCharset = null;
+//
+//		if (method instanceof PostMethod) {
+//			responseCharset = ((PostMethod) method).getResponseCharSet();
+//		} else if (method instanceof GetMethod) {
+//			responseCharset = ((GetMethod) method).getResponseCharSet();
+//		}
+//
+//		final InputStream responseStream = method.getResponseBodyAsStream();
+//
+//		String responseBody = null;
+//
+//		responseBody = CharsetUtil
+//				.decodeStream(responseStream, responseCharset);
+//
+//		if (enableLog && logger.isInfoEnabled()) {
+//			logResponse(method, responseBody);
+//		}
+//
+//		// Release the connection
+//		method.releaseConnection();
+//
+//		if (statusCode != HttpStatus.SC_OK) {
+//			final String errorMessage = String
+//					.format(
+//							"Failed while trying \"%s\". StatusCode \"%d\". Response: %s",
+//							method.getURI().getPath(), statusCode,
+//							getCompleteResponse(method, responseBody));
+//
+//			throw new HttpException(errorMessage);
+//		}
+//		return responseBody;
+//	}
+//
+//	private static void logResponse(final HttpMethod postMethod,
+//			final String responseBody) throws URIException {
+//		final StringBuilder logBuilder = new StringBuilder();
+//		logBuilder
+//				.append("===== HTTP Response ===============================================\n");
+//		logBuilder.append(getCompleteResponse(postMethod, responseBody));
+//		StringBuilderUtil.appendLineBreakOnlyIfNotEndWithOne(logBuilder);
+//		logBuilder
+//				.append("===================================================================\n");
+//		logger.info(logBuilder.toString());
+//	}
+//
+//	private static void logRequest(final HttpMethod method,
+//			final String content, final Map<String, String> parameters)
+//			throws URIException {
+//		final StringBuilder logBuilder = new StringBuilder();
+//		logBuilder
+//				.append("===== HTTP Request ================================================");
+//		logBuilder.append("\n    uri: ");
+//		URI targetEndpoint = method.getURI();
+//		logBuilder.append(targetEndpoint == null ? null : targetEndpoint
+//				.toString());
+//		logBuilder.append('\n');
+//
+//		appendParameters(logBuilder, parameters);
+//
+//		logBuilder
+//				.append("-------------------------------------------------------------------\n");
+//		// log the post content if it is a postmethod
+//		if (method instanceof PostMethod) {
+//			logBuilder.append(getPostRequest((PostMethod) method, content));
+//		}
+//		StringBuilderUtil.appendLineBreakOnlyIfNotEndWithOne(logBuilder);
+//		logBuilder
+//				.append("===================================================================\n");
+//		logger.info(logBuilder.toString());
+//	}
+//
+//	private static HttpClient getHttpClient(
+//			final int socketTimeoutInMilisecond, final String proxy,
+//			final int proxyPort, final String proxyUserName,
+//			final String proxyPassword) {
+//		final HttpClient client = new HttpClient();
+//
+//		if (socketTimeoutInMilisecond >= 0) {
+//			client.getParams().setSoTimeout(socketTimeoutInMilisecond);
+//		}
+//		// Set proxy configuration if needed
+//		if (proxy != null && proxy.length() > 0 && proxyPort > 0) {
+//			final HostConfiguration config = client.getHostConfiguration();
+//			config.setProxy(proxy, proxyPort);
+//
+//			if (proxyUserName != null && proxyUserName.length() > 0) {
+//				final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+//						proxyUserName, proxyPassword);
+//				final AuthScope authScope = new AuthScope(proxy, proxyPort);
+//				client.getState().setProxyCredentials(authScope, credentials);
+//			}
+//		} else {
+//			final HostConfiguration config = client.getHostConfiguration();
+//			config.setProxyHost(null);
+//		}
+//		return client;
+//	}
+//
+//	private static String getPostRequest(final PostMethod callingMethod,
+//			final String requestBody) {
+//		final StringBuilder contentBuilder = new StringBuilder();
+//
+//		contentBuilder.append("ContentCharset: ");
+//		contentBuilder.append(callingMethod.getRequestCharSet());
+//		contentBuilder.append('\n');
+//
+//		final Header[] headers = callingMethod.getRequestHeaders();
+//
+//		appendHeaders(contentBuilder, headers);
+//
+//		contentBuilder
+//				.append("-------------------------------------------------------------------\n");
+//
+//		contentBuilder.append(requestBody);
+//
+//		return contentBuilder.toString();
+//	}
+//
+//	private static String getCompleteResponse(final HttpMethod callingMethod,
+//			final String response) throws URIException {
+//		final StringBuilder contentBuilder = new StringBuilder();
+//
+//		contentBuilder.append("Request uri: ");
+//		URI targetEndpoint = callingMethod.getURI();
+//		contentBuilder.append(targetEndpoint == null ? null : targetEndpoint
+//				.toString());
+//		contentBuilder
+//				.append("\n-------------------------------------------------------------------\n");
+//
+//		String contentCharSet;
+//		if (callingMethod instanceof PostMethod) {
+//			contentCharSet = ((PostMethod) callingMethod).getResponseCharSet();
+//		} else if (callingMethod instanceof GetMethod) {
+//			contentCharSet = ((GetMethod) callingMethod).getResponseCharSet();
+//		} else {
+//			contentCharSet = "UNKNOWN";
+//		}
+//
+//		contentBuilder.append("ContentCharset: ");
+//		contentBuilder.append(contentCharSet);
+//		contentBuilder.append('\n');
+//
+//		final long contentLength;
+//		if (callingMethod instanceof PostMethod) {
+//			contentLength = ((PostMethod) callingMethod)
+//					.getResponseContentLength();
+//		} else if (callingMethod instanceof GetMethod) {
+//			contentLength = ((GetMethod) callingMethod)
+//					.getResponseContentLength();
+//		} else {
+//			contentLength = 0;
+//		}
+//		contentBuilder.append("ContentLength: ");
+//		contentBuilder.append(contentLength);
+//		contentBuilder.append('\n');
+//
+//		final Header[] headers = callingMethod.getResponseHeaders();
+//
+//		appendHeaders(contentBuilder, headers);
+//
+//		contentBuilder
+//				.append("-------------------------------------------------------------------\n");
+//
+//		contentBuilder.append(response);
+//
+//		return contentBuilder.toString();
+//	}
+//
+//	private static void appendHeaders(final StringBuilder contentBuilder,
+//			final Header[] headers) {
+//		for (int i = 0; headers != null && i < headers.length; i++) {
+//			contentBuilder.append(headers[i].getName());
+//			contentBuilder.append(": ");
+//			contentBuilder.append(headers[i].getValue());
+//			contentBuilder.append('\n');
+//		}
+//	}
+//
+//	private static void appendParameters(final StringBuilder contentBuilder,
+//			final Map<String, String> parameters) {
+//
+//		if (parameters != null && parameters.size() > 0) {
+//			for (final Entry<String, String> param : parameters.entrySet()) {
+//				contentBuilder.append(param.getKey());
+//				contentBuilder.append(": ");
+//				contentBuilder.append(param.getValue());
+//				contentBuilder.append('\n');
+//			}
+//
+//			contentBuilder.append('\n');
+//		}
+//	}
+// }
