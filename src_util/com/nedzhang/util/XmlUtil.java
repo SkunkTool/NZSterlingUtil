@@ -329,6 +329,28 @@ public final class XmlUtil {
 	// return def;
 	// }
 
+	public static Element getRootElement(final Node docWithARootElement) {
+		
+		if (docWithARootElement != null && docWithARootElement.getChildNodes() != null && docWithARootElement.getChildNodes().getLength() > 0) {
+			int numOfChildNodes = docWithARootElement.getChildNodes().getLength();
+			
+			if (numOfChildNodes == 1) {
+				return (Element) docWithARootElement.getFirstChild();
+			} else {
+				for (int i=0; i<numOfChildNodes; i++) {
+					Node nodeToInspect = docWithARootElement.getChildNodes().item(i);
+					
+					if (nodeToInspect != null && nodeToInspect.getNodeType() == Node.ELEMENT_NODE) {
+						return (Element) nodeToInspect;
+					}
+				}
+			}
+		}
+		
+		return null;
+		
+	}
+	
 	/**
 	 * 
 	 * 
@@ -1584,6 +1606,7 @@ public final class XmlUtil {
 	private XmlUtil() {
 
 	}
+
 
 	// Bad usage
 	// /**
